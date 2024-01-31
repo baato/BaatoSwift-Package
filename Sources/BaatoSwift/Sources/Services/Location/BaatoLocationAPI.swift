@@ -14,7 +14,7 @@ enum BaatoLocationAPI: NetworkingRouter {
     case search(Parameters)
     case reverseGeocode(Parameters)
     case getPlaceDetail(Parameters)
-    case styles(Parameters)
+    case nearBy(Parameters)
     
      var path: String {
         switch self {
@@ -24,8 +24,8 @@ enum BaatoLocationAPI: NetworkingRouter {
             return "reverse"
         case .getPlaceDetail:
             return "places"
-        case .styles:
-            return "styles"
+        case .nearBy:
+            return "search/nearby"
         }
     }
     
@@ -34,7 +34,7 @@ enum BaatoLocationAPI: NetworkingRouter {
         case .search,
          .reverseGeocode,
          .getPlaceDetail,
-         .styles:
+         .nearBy:
             return .get
         }
     }
@@ -44,7 +44,7 @@ enum BaatoLocationAPI: NetworkingRouter {
         case .search(let params),
          .reverseGeocode(let params),
          .getPlaceDetail(let params),
-         .styles(let params):
+         .nearBy(let params):
             return [.url(params)]
         }
     }

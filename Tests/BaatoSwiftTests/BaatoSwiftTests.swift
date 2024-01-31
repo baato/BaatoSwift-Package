@@ -10,8 +10,8 @@ final class BaatoSwiftTests: XCTestCase {
     func testExample() throws {
         BaatoSwift.configure(configure: Configuration(mode: .live, key: "bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ"))
         
-        try testReverse()
-//        try testSearch()
+//        try testReverse()
+        try testSearch()
 //        try testPlaceDetail()
 //        try testDirections()
     }
@@ -24,6 +24,36 @@ final class BaatoSwiftTests: XCTestCase {
         let expectation = self.expectation(description: "Search Test")
         
         let res = BaatoSwift.location.search(query: "s", limit: 10, type: "town")
+       
+        res.sink { error in
+           print(error)
+            switch error {
+            case .failure(let error):
+                errorRes = error
+            case .finished:
+                break
+            }
+            expectation.fulfill()
+        } receiveValue: { data in
+            places = data
+            print(places.count)
+            expectation.fulfill()
+        }.store(in: &bag)
+        
+        waitForExpectations(timeout: 20)
+        
+        XCTAssertNil(errorRes)
+        XCTAssertTrue(!places.isEmpty)
+    }
+    
+    func testSearchNearby() throws {
+        BaatoSwift.configure(configure: Configuration(mode: .live, key: "bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ"))
+        var places = [BaatoPlaceModel]()
+        var errorRes: Error?
+        
+        let expectation = self.expectation(description: "Search Test")
+        
+        let res = BaatoSwift.location.nearBy(coordinate: CLLocationCoordinate2D(latitude: 27.70446921370009, longitude: 85.32051086425783))
        
         res.sink { error in
            print(error)
@@ -145,5 +175,35 @@ final class BaatoSwiftTests: XCTestCase {
         
         XCTAssertNil(errorRes)
         XCTAssertTrue(!places.isEmpty)
+    }
+    
+    func testMapboxDirections() throws {
+        BaatoSwift.configure(configure: Configuration(mode: .live, key: "bpk.TqpOIK5KflKR_zEI0ONEVdCZmwmfMye9i67nAjsGlMgQ"))
+        var places: Data?
+        var errorRes: Error?
+        
+        let expectation = self.expectation(description: "Direction")
+        
+        let res = BaatoSwift.navigation.mapBoxDirections(startPoint:  CLLocationCoordinate2D(latitude: 27.724316366064567, longitude: 85.33965110778809), endPoint:  CLLocationCoordinate2D(latitude: 27.7418, longitude: 85.3479), mode: .car)
+       
+        res.sink { error in
+           print(error)
+            switch error {
+            case .failure(let error):
+                print(error)
+                errorRes = error
+            case .finished:
+                break
+            }
+            expectation.fulfill()
+        } receiveValue: { data in
+            places = data
+            expectation.fulfill()
+        }.store(in: &bag)
+        
+        waitForExpectations(timeout: 20)
+        
+        XCTAssertNil(errorRes)
+        XCTAssertNil(places)
     }
 }
