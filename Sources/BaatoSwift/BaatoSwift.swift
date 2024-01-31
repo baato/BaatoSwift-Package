@@ -16,6 +16,7 @@ public struct BaatoSwift {
     //MARK: - Public Properties
     public static let location = BaatoLocation()
     public static let navigation = BaatoNavigation()
+    public static let map = BaatoMap()
 
     public static func configure(configure: Configuration) {
         network.configure(configure: configure)

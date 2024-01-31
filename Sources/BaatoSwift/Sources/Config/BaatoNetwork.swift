@@ -20,6 +20,7 @@ public enum ConfigurationMode : String, Decodable {
 
 
 @available(iOS 13.0, *)
+@available(macOS 10.15, *)
 struct BaatoNetwork {
     static var configure: Configuration?
     

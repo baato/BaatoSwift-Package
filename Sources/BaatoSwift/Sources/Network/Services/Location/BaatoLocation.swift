@@ -134,10 +134,14 @@ public class BaatoLocation {
         }.store(in: &bag)
     }
     
-    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "","type": type, "lat": coordinate.latitude, "lon":coordinate.longitude, "limit": limit, "radius": radius]
+    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String? = nil, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
+        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "lat": coordinate.latitude, "lon":coordinate.longitude, "limit": limit, "radius": radius]
         
-        if let isSortByDistance = isSortByDistance {
+        if let type = type {
+            params["type"] = type
+        }
+        
+        if let isSortByDistance = isSortByDistance, isSortByDistance == true {
             params["sortBy"] = "distance"
         }
         
@@ -164,7 +168,7 @@ public class BaatoLocation {
         }.eraseToAnyPublisher()
     }
     
-    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
+    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String? = nil, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
         nearBy(coordinate: coordinate, limit: limit, type: type, radius: radius, isSortByDistance: isSortByDistance, isOpen: isOpen).sink { errorCompletetion in
             switch errorCompletetion {
             case .failure(let error):
