@@ -16,8 +16,8 @@ public class BaatoLocation {
     var cancellable: AnyCancellable?
     var bag = Set<AnyCancellable>()
     
-    public func search(query: String, limit: Int = 7, type: String? = nil) -> AnyPublisher<[BaatoLocationModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "q": query, "limit": limit]
+    public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int = 10) -> AnyPublisher<[BaatoLocationModel], Error> {
+        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "q": query, "limit": limit, "radius": radius]
         if let type = type {
             params["type"] = type
         }
@@ -41,9 +41,9 @@ public class BaatoLocation {
         }.eraseToAnyPublisher()
     }
     
-    public func search(query: String, limit: Int = 7, type: String? = nil, onComplete: @escaping ([BaatoLocationModel]) -> Void,  onError:  @escaping (Error) -> Void) {
+    public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int = 10, onComplete: @escaping ([BaatoLocationModel]) -> Void,  onError:  @escaping (Error) -> Void) {
 
-        search(query: query, limit: limit, type: type).sink { errorCompletetion in
+        search(query: query, limit: limit, type: type, radius: radius).sink { errorCompletetion in
             switch errorCompletetion {
             case .failure(let error):
                 onError(error)
@@ -56,11 +56,14 @@ public class BaatoLocation {
 
     }
 
-    public func reverseGeocode(coordinate: CLLocationCoordinate2D, limit: Int = 1) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", 
+    public func reverseGeocode(coordinate: CLLocationCoordinate2D, limit: Int = 1, radius: Double? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
+        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "",
                                      "lat": coordinate.latitude,
                                      "lon": coordinate.longitude,
                                      "limit": limit]
+        if let radius = radius {
+            params["radius"] = radius
+        }
         
         return Future<[BaatoPlaceModel], Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoLocationAPI.reverseGeocode(params)).parse().sink { completion in
@@ -81,8 +84,8 @@ public class BaatoLocation {
         }.eraseToAnyPublisher()
     }
     
-    public func reverseGeocode(coordinate: CLLocationCoordinate2D, limit: Int = 1, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
-        reverseGeocode(coordinate: coordinate, limit: limit).sink { errorCompletetion in
+    public func reverseGeocode(coordinate: CLLocationCoordinate2D, limit: Int = 1, radius: Double? = nil, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
+        reverseGeocode(coordinate: coordinate, limit: limit, radius: radius).sink { errorCompletetion in
             switch errorCompletetion {
             case .failure(let error):
                 onError(error)
@@ -131,14 +134,15 @@ public class BaatoLocation {
         }.store(in: &bag)
     }
     
-    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String? = nil, sortBy: String? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "lat": coordinate.latitude, "lon":coordinate.longitude, "limit": limit]
-        if let type = type {
-            params["type"] = type
+    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
+        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "","type": type, "lat": coordinate.latitude, "lon":coordinate.longitude, "limit": limit, "radius": radius]
+        
+        if let isSortByDistance = isSortByDistance {
+            params["sortBy"] = "distance"
         }
         
-        if let sortBy = sortBy {
-            params["sortBy"] = sortBy
+        if let isOpen = isOpen {
+            params["isOpen"] = isOpen
         }
  
         return Future<[BaatoPlaceModel], Error> { promise in
@@ -160,8 +164,8 @@ public class BaatoLocation {
         }.eraseToAnyPublisher()
     }
     
-    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String? = nil, sortBy: String? = nil, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
-        nearBy(coordinate: coordinate, limit: limit, type: type, sortBy: sortBy).sink { errorCompletetion in
+    public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
+        nearBy(coordinate: coordinate, limit: limit, type: type, radius: radius, isSortByDistance: isSortByDistance, isOpen: isOpen).sink { errorCompletetion in
             switch errorCompletetion {
             case .failure(let error):
                 onError(error)
