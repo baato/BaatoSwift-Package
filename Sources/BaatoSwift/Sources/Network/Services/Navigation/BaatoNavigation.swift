@@ -93,9 +93,9 @@ public class BaatoNavigation {
         }.store(in: &bag)
     }
     
-    public func mapBoxDirections(startPoint: CLLocationCoordinate2D, endPoint: CLLocationCoordinate2D, mode: BaatoNavigationMode) -> AnyPublisher<Data, Error> {
+    public func mapBoxDirections(startPoint: CLLocationCoordinate2D, endPoint: CLLocationCoordinate2D, mode: BaatoNavigationMode, isAlternativeEnable: Bool = false) -> AnyPublisher<Data, Error> {
         let arrayPoints = [startPoint, endPoint].map({"\($0.latitude),\($0.longitude)"})
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": true, "forMapbox": true]
+        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": true, "forMapbox": true, "alternatives": isAlternativeEnable]
  
         return Future<Data, Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoNavigationAPI.directions(params)).parse().sink { completion in
@@ -111,8 +111,8 @@ public class BaatoNavigation {
         }.eraseToAnyPublisher()
     }
     
-    public func mapBoxDirections(startPoint: CLLocationCoordinate2D, endPoint: CLLocationCoordinate2D, mode: BaatoNavigationMode, onComplete: @escaping (Data) -> Void,  onError:  @escaping (Error) -> Void) {
-        mapBoxDirections(startPoint: startPoint, endPoint:endPoint, mode: mode).sink { errorCompletetion in
+    public func mapBoxDirections(startPoint: CLLocationCoordinate2D, endPoint: CLLocationCoordinate2D, mode: BaatoNavigationMode, isAlternativeEnable: Bool = false, onComplete: @escaping (Data) -> Void,  onError:  @escaping (Error) -> Void) {
+        mapBoxDirections(startPoint: startPoint, endPoint:endPoint, mode: mode, isAlternativeEnable: isAlternativeEnable).sink { errorCompletetion in
             switch errorCompletetion {
             case .failure(let error):
                 onError(error)

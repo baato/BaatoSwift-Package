@@ -15,8 +15,10 @@ public struct BaatoLocationModel: Codable, Hashable {
     public let type: String
     public let score: Double
     public let radialDistanceInKm: Double?
+    public let lat: Double?
+    public let long: Double?
     
-    public init(placeId: Int, osmId: Int, name: String, address: String, type: String, score: Double, radialDistanceInKm: Double? = nil) {
+    public init(placeId: Int, osmId: Int, name: String, address: String, type: String, score: Double, radialDistanceInKm: Double? = nil, lat: Double? = nil, long: Double? = nil) {
         self.placeId = placeId
         self.osmId = osmId
         self.name = name
@@ -24,5 +26,7 @@ public struct BaatoLocationModel: Codable, Hashable {
         self.type = type
         self.score = score
         self.radialDistanceInKm = radialDistanceInKm
+        self.lat = lat
+        self.long = long
     }
 }
