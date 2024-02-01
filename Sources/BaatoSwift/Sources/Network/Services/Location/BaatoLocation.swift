@@ -16,10 +16,20 @@ public class BaatoLocation {
     var cancellable: AnyCancellable?
     var bag = Set<AnyCancellable>()
     
-    public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int = 10) -> AnyPublisher<[BaatoLocationModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "q": query, "limit": limit, "radius": radius]
+    public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int? = nil, userCoordinate: CLLocationCoordinate2D? = nil) -> AnyPublisher<[BaatoLocationModel], Error> {
+        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "q": query, "limit": limit]
+        
         if let type = type {
             params["type"] = type
+        }
+        
+        if let radius = radius {
+            params["radius"] = radius
+        }
+        
+        if let userCoordinate = userCoordinate {
+            params["lat"] = userCoordinate.latitude
+            params["lon"] = userCoordinate.longitude
         }
  
         return Future<[BaatoLocationModel], Error> { promise in
@@ -41,9 +51,9 @@ public class BaatoLocation {
         }.eraseToAnyPublisher()
     }
     
-    public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int = 10, onComplete: @escaping ([BaatoLocationModel]) -> Void,  onError:  @escaping (Error) -> Void) {
+    public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int? = nil, userCoordinate: CLLocationCoordinate2D? = nil, onComplete: @escaping ([BaatoLocationModel]) -> Void,  onError:  @escaping (Error) -> Void) {
 
-        search(query: query, limit: limit, type: type, radius: radius).sink { errorCompletetion in
+        search(query: query, limit: limit, type: type, radius: radius, userCoordinate: userCoordinate).sink { errorCompletetion in
             switch errorCompletetion {
             case .failure(let error):
                 onError(error)

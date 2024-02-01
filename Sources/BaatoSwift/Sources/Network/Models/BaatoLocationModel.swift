@@ -14,9 +14,9 @@ public struct BaatoLocationModel: Codable, Hashable {
     public let address: String
     public let type: String
     public let score: Double
-    public let radialDistanceInKm: Double
+    public let radialDistanceInKm: Double?
     
-    public init(placeId: Int, osmId: Int, name: String, address: String, type: String, score: Double, radialDistanceInKm: Double) {
+    public init(placeId: Int, osmId: Int, name: String, address: String, type: String, score: Double, radialDistanceInKm: Double? = nil) {
         self.placeId = placeId
         self.osmId = osmId
         self.name = name
