@@ -9,12 +9,12 @@ import Foundation
 import SwiftNetworking
 import Combine
 
-public struct Configuration : Decodable {
+public struct Configuration : Codable {
     public let mode: ConfigurationMode
     public let key : String
 }
 
-public enum ConfigurationMode : String, Decodable {
+public enum ConfigurationMode : String, Codable {
     case live, test, dev
 }
 
