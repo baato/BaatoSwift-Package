@@ -12,6 +12,11 @@ import Combine
 public struct Configuration : Codable {
     public let mode: ConfigurationMode
     public let key : String
+    
+    public init(mode: ConfigurationMode, key: String) {
+        self.mode = mode
+        self.key = key
+    }
 }
 
 public enum ConfigurationMode : String, Codable {

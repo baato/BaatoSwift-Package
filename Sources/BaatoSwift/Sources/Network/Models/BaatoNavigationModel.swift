@@ -15,6 +15,14 @@ public struct BaatoNavigationModel: Codable {
     public let timeInMs: CLong
     public let instructionList: [BaatoInstruction]?
     
+    public init(routeWight: Double?, distanceInMeters: Double, encodedPolyline: String, timeInMs: CLong, instructionList: [BaatoInstruction]?) {
+        self.routeWight = routeWight
+        self.distanceInMeters = distanceInMeters
+        self.encodedPolyline = encodedPolyline
+        self.timeInMs = timeInMs
+        self.instructionList = instructionList
+    }
+    
 }
 
 public struct BaatoInstruction: Codable {
@@ -32,6 +40,17 @@ public struct BaatoInstruction: Codable {
             case sign, name, distance, time, length, points, annotation, extraInfoJSON
             // Add other coding keys for your other properties if needed
         }
+    
+    public init(sign: Int, name: String, distance: Double, time: Int, length: Int, points: BaatoInstructionPoint? = nil, annotation: BaatoInstructionAnnotation? = nil, extraInfoJSON: [String : BaatoCodableValue]? = nil) {
+        self.sign = sign
+        self.name = name
+        self.distance = distance
+        self.time = time
+        self.length = length
+        self.points = points
+        self.annotation = annotation
+        self.extraInfoJSON = extraInfoJSON
+    }
 }
 
 public struct BaatoInstructionPoint: Codable {
@@ -41,18 +60,38 @@ public struct BaatoInstructionPoint: Codable {
 //    public let threeDimention: Bool
     public let dimension: Int
     public let empty: Bool
+    
+    public init(size: Int, intervalString: String, immutable: Bool, dimension: Int, empty: Bool) {
+        self.size = size
+        self.intervalString = intervalString
+        self.immutable = immutable
+        self.dimension = dimension
+        self.empty = empty
+    }
 }
 
 public struct BaatoInstructionAnnotation: Codable {
     public let empty: Bool
     public let importance: Int
     public let message: String
+    
+    public init(empty: Bool, importance: Int, message: String) {
+        self.empty = empty
+        self.importance = importance
+        self.message = message
+    }
 }
 
 public struct ExtraInfo: Codable {
     public let empty: Bool
     public let importance: Int
     public let message: String
+    
+    public init(empty: Bool, importance: Int, message: String) {
+        self.empty = empty
+        self.importance = importance
+        self.message = message
+    }
 }
 
 // Define a wrapper type that conforms to Codable and represents any Codable type

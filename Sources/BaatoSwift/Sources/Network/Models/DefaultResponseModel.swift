@@ -10,4 +10,5 @@ import Foundation
 public struct BaatoResponseModel<T: Codable>: Codable {
     public let data: T?
     public let message: String
+
 }

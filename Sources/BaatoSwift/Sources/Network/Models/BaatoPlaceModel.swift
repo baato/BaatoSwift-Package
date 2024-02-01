@@ -19,6 +19,19 @@ public struct BaatoPlaceModel: Codable {
     public let tags: [String]?
     public let geometry: Geometry?
     public let score: StringOrIntType?
+    
+    public init(placeId: Int?, osmId: Int?, license: String?, name: String?, address: String?, type: String?, centroid: Centroid, tags: [String]?, geometry: Geometry?, score: StringOrIntType?) {
+        self.placeId = placeId
+        self.osmId = osmId
+        self.license = license
+        self.name = name
+        self.address = address
+        self.type = type
+        self.centroid = centroid
+        self.tags = tags
+        self.geometry = geometry
+        self.score = score
+    }
 }
 
 // MARK: - Centroid

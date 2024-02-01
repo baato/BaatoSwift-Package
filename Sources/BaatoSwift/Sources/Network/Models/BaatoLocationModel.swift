@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct BaatoLocationModel: Codable {
+public struct BaatoLocationModel: Codable, Hashable {
     public let placeId: Int
     public  let osmId: Int
     public let name: String
@@ -15,4 +15,14 @@ public struct BaatoLocationModel: Codable {
     public let type: String
     public let score: Double
     public let radialDistanceInKm: Double
+    
+    public init(placeId: Int, osmId: Int, name: String, address: String, type: String, score: Double, radialDistanceInKm: Double) {
+        self.placeId = placeId
+        self.osmId = osmId
+        self.name = name
+        self.address = address
+        self.type = type
+        self.score = score
+        self.radialDistanceInKm = radialDistanceInKm
+    }
 }
