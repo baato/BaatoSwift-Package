@@ -10,8 +10,8 @@ import SwiftNetworking
 import Combine
 
 public struct Configuration : Decodable {
-    let mode: ConfigurationMode
-    let key : String
+    public let mode: ConfigurationMode
+    public let key : String
 }
 
 public enum ConfigurationMode : String, Decodable {
