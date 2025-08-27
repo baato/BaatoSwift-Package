@@ -131,6 +131,43 @@ public class BaatoLocation {
         }.eraseToAnyPublisher()
     }
     
+    public func placeDetailsForOsmID(osmId: Int, limit: Int = 1) -> AnyPublisher<[BaatoPlaceModel], Error> {
+        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "",
+                                     "osmId": osmId,
+                                     "limit": limit]
+        
+        return Future<[BaatoPlaceModel], Error> { promise in
+            self.cancellable = SwiftNetworking.dataRequest(router: BaatoLocationAPI.getPlaceDetail(params)).parse().sink { completion in
+                   switch completion {
+                   case .finished:
+                      break
+                   case .failure(let error):
+                       promise(.failure(error))
+                   }
+               } receiveValue: { response in
+                   do {
+                       let data = try JSONDecoder().decode(BaatoResponseModel<[BaatoPlaceModel]>.self, from: response)
+                       promise(.success(data.data ?? []))
+                   } catch {
+                       promise(.failure(error))
+                   }
+               }
+        }.eraseToAnyPublisher()
+    }
+    
+    public func placeDetailsForOsmID(osmId: Int, limit: Int = 1, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
+        placeDetailsForOsmID(osmId: osmId, limit: limit).sink { errorCompletetion in
+            switch errorCompletetion {
+            case .failure(let error):
+                onError(error)
+            case .finished:
+                break
+            }
+        } receiveValue: { data in
+            onComplete(data)
+        }.store(in: &bag)
+    }
+    
     public func placeDetails(placeId: Int, limit: Int = 1, onComplete: @escaping ([BaatoPlaceModel]) -> Void,  onError:  @escaping (Error) -> Void) {
         placeDetails(placeId: placeId, limit: limit).sink { errorCompletetion in
             switch errorCompletetion {
