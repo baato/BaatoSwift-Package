@@ -17,8 +17,7 @@ public class BaatoLocation {
     var bag = Set<AnyCancellable>()
     
     public func search(query: String, limit: Int = 7, type: String? = nil, radius: Int? = nil, userCoordinate: CLLocationCoordinate2D? = nil) -> AnyPublisher<[BaatoLocationModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "q": query, "limit": limit]
-        
+        var params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "", "q": query, "limit": limit]
         if let type = type {
             params["type"] = type
         }
@@ -30,6 +29,11 @@ public class BaatoLocation {
         if let userCoordinate = userCoordinate {
             params["lat"] = userCoordinate.latitude
             params["lon"] = userCoordinate.longitude
+        }
+        
+        params["app_id"] = BaatoNetwork.configuration?.appID
+        if let userId = BaatoNetwork.configuration?.userID {
+            params["user_id"] = userId
         }
  
         return Future<[BaatoLocationModel], Error> { promise in
@@ -67,12 +71,16 @@ public class BaatoLocation {
     }
 
     public func reverseGeocode(coordinate: CLLocationCoordinate2D, limit: Int = 1, radius: Double? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "",
+        var params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "",
                                      "lat": coordinate.latitude,
                                      "lon": coordinate.longitude,
                                      "limit": limit]
         if let radius = radius {
             params["radius"] = radius
+        }
+        params["app_id"] = BaatoNetwork.configuration?.appID
+        if let userId = BaatoNetwork.configuration?.userID {
+            params["user_id"] = userId
         }
         
         return Future<[BaatoPlaceModel], Error> { promise in
@@ -108,10 +116,13 @@ public class BaatoLocation {
     }
     
     public func placeDetails(placeId: Int, limit: Int = 1) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "",
+        var params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "",
                                      "placeId": placeId,
                                      "limit": limit]
-        
+        params["app_id"] = BaatoNetwork.configuration?.appID
+        if let userId = BaatoNetwork.configuration?.userID {
+            params["user_id"] = userId
+        }
         return Future<[BaatoPlaceModel], Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoLocationAPI.getPlaceDetail(params)).parse().sink { completion in
                    switch completion {
@@ -132,10 +143,13 @@ public class BaatoLocation {
     }
     
     public func placeDetailsForOsmID(osmId: Int, limit: Int = 1) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "",
+        var params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "",
                                      "osmId": osmId,
                                      "limit": limit]
-        
+        params["app_id"] = BaatoNetwork.configuration?.appID
+        if let userId = BaatoNetwork.configuration?.userID {
+            params["user_id"] = userId
+        }
         return Future<[BaatoPlaceModel], Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoLocationAPI.getPlaceDetail(params)).parse().sink { completion in
                    switch completion {
@@ -182,7 +196,7 @@ public class BaatoLocation {
     }
     
     public func nearBy(coordinate: CLLocationCoordinate2D, limit: Int = 20, type: String? = nil, radius: Int = 10, isSortByDistance: Bool? = nil, isOpen: Bool? = nil) -> AnyPublisher<[BaatoPlaceModel], Error> {
-        var params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "lat": coordinate.latitude, "lon":coordinate.longitude, "limit": limit, "radius": radius]
+        var params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "", "lat": coordinate.latitude, "lon":coordinate.longitude, "limit": limit, "radius": radius]
         
         if let type = type {
             params["type"] = type
@@ -194,6 +208,11 @@ public class BaatoLocation {
         
         if let isOpen = isOpen {
             params["isOpen"] = isOpen
+        }
+        
+        params["app_id"] = BaatoNetwork.configuration?.appID
+        if let userId = BaatoNetwork.configuration?.userID {
+            params["user_id"] = userId
         }
  
         return Future<[BaatoPlaceModel], Error> { promise in

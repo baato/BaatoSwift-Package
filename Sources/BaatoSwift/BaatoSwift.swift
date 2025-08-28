@@ -20,7 +20,7 @@ public struct BaatoSwift {
     public static let map = BaatoMap()
 
     public static func configure(configure: Configuration) {
-        network.configure(configure: configure)
+        network.configure(configuration: configure)
     }
     
     public static func getSessionId() -> String {
@@ -33,4 +33,13 @@ public struct BaatoSwift {
             return newSessionId
         }
     }
+    
+    /// Updates the user identifier for all subsequent API requests.
+      /// Call this after the initial `configure` call, once you have obtained a user-specific ID.
+      /// - Parameter userID: The user identifier string, or nil to remove it.
+      public static func setUserID(_ userID: String?) {
+          // This safely updates the userID on the statically stored configuration object.
+          BaatoNetwork.configuration?.userID = userID
+          print("BaatoSwift: User ID has been updated.")
+      }
 }
