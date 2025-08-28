@@ -23,7 +23,7 @@ public class BaatoNavigation {
     
     public func directions(points: [CLLocationCoordinate2D], mode: BaatoNavigationMode, isInstructionEnable: Bool = false) -> AnyPublisher<[BaatoNavigationModel], Error> {
         let arrayPoints = points.map({"\($0.latitude),\($0.longitude)"})
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": isInstructionEnable]
+        let params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": isInstructionEnable]
  
         return Future<[BaatoNavigationModel], Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoNavigationAPI.directions(params)).parse().sink { completion in
@@ -59,7 +59,7 @@ public class BaatoNavigation {
     
     public func alterNativeDirections(startPoint: CLLocationCoordinate2D, endPoint: CLLocationCoordinate2D, mode: BaatoNavigationMode, isInstructionEnable: Bool = false) -> AnyPublisher<[BaatoNavigationModel], Error> {
         let arrayPoints = [startPoint, endPoint].map({"\($0.latitude),\($0.longitude)"})
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": isInstructionEnable, "alternatives": true]
+        let params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": isInstructionEnable, "alternatives": true]
  
         return Future<[BaatoNavigationModel], Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoNavigationAPI.directions(params)).parse().sink { completion in
@@ -95,7 +95,7 @@ public class BaatoNavigation {
     
     public func mapBoxDirections(startPoint: CLLocationCoordinate2D, endPoint: CLLocationCoordinate2D, mode: BaatoNavigationMode, isAlternativeEnable: Bool = false) -> AnyPublisher<Data, Error> {
         let arrayPoints = [startPoint, endPoint].map({"\($0.latitude),\($0.longitude)"})
-        let params: [String: Any] = ["key": BaatoNetwork.configure?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": true, "forMapbox": true, "alternatives": isAlternativeEnable]
+        let params: [String: Any] = ["key": BaatoNetwork.configuration?.key ?? "", "points": arrayPoints, "mode": mode, "instructions": true, "forMapbox": true, "alternatives": isAlternativeEnable]
  
         return Future<Data, Error> { promise in
             self.cancellable = SwiftNetworking.dataRequest(router: BaatoNavigationAPI.directions(params)).parse().sink { completion in

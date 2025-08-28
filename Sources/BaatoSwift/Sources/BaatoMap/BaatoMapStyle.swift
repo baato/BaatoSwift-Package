@@ -18,7 +18,7 @@ public enum BaatoMapStyle: String {
     case satellite = "Satellite"
     
     public var url: URL? {
-        let key = BaatoNetwork.configure?.key ?? ""
+        let key = BaatoNetwork.configuration?.key ?? ""
         let baseUrl = "https://api.baato.io/api/v1/styles/"
         switch self {
         case .satellite:
