@@ -19,8 +19,19 @@ public struct BaatoPlaceModel: Codable {
     public let tags: [String]?
     public let geometry: Geometry?
     public let score: StringOrIntType?
-    
-    public init(placeId: Int?, osmId: Int?, license: String?, name: String?, address: String?, type: String?, centroid: Centroid, tags: [String]?, geometry: Geometry?, score: StringOrIntType?) {
+
+    /// Human-readable category name (e.g. "Office & Industrial").
+    /// Only populated by the `/api/v1/places` (place detail) endpoint; may be nil
+    /// for other endpoints or older data. Optional so existing responses that omit
+    /// it continue to decode without error.
+    public let category: String?
+
+    /// Human-readable subcategory name (e.g. "Corporate Office").
+    /// Like `category`, only populated by `/api/v1/places` and may be nil.
+    /// Optional add-on so existing responses that omit it still decode.
+    public let subcategory: String?
+
+    public init(placeId: Int?, osmId: Int?, license: String?, name: String?, address: String?, type: String?, centroid: Centroid, tags: [String]?, geometry: Geometry?, score: StringOrIntType?, category: String? = nil, subcategory: String? = nil) {
         self.placeId = placeId
         self.osmId = osmId
         self.license = license
@@ -31,6 +42,8 @@ public struct BaatoPlaceModel: Codable {
         self.tags = tags
         self.geometry = geometry
         self.score = score
+        self.category = category
+        self.subcategory = subcategory
     }
 }
 
